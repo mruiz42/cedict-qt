@@ -3,13 +3,22 @@ from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 from PySide2.QtSql import *
 import re
+from gtts import gTTS
 from random import randint
+from io import BytesIO
+from playsound import playsound
+import simpleaudio as sa
+from pydub import AudioSegment
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
+        self.tts = gTTS("nihao", "zh-cn")
+        self.s = ""
+        self.mp3_fp = BytesIO()
         self.db = QSqlDatabase.addDatabase("QSQLITE", "SQLITE")
         self.db.setDatabaseName("dictionary.db")
         self.db.open()
@@ -29,12 +38,24 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_query.textChanged.connect(self.queryAction)
         # self.ui.tableView.
         self.ui.pushButton_search.clicked.connect(self.queryAction)
+        self.ui.pushButton_audio.clicked.connect(self.playButtonAction)
         numRows = self.model.rowCount()
         self.ui.tableView.selectRow(randint(0, numRows))
+        selection_model = self.ui.tableView.selectionModel()
+        selection_model.selectionChanged.connect(self.getRowData)
         self.getRowData()
         # self.ui.tableView.itemChanged.connect(self.queryAction)
         # self.ui.tableView.
         self.show()
+    def playButtonAction(self):
+        self.tts = gTTS(self.s, "zh-cn")
+        self.tts.save("out.mp3")
+        sound = AudioSegment.from_mp3("out.mp3")
+        sound.export("out.wav", format="wav")
+        wave_obj = sa.WaveObject.from_wave_file("out.wav")
+        play_obj = wave_obj.play()
+        play_obj.wait_done()
+        print(self.s, "Audio played")
 
     def queryAction(self):
         queryWord = self.ui.lineEdit_query.text()
@@ -51,6 +72,7 @@ class MainWindow(QMainWindow):
 
         index = self.ui.tableView.currentIndex()
         row = index.row()
+        self.s = index.sibling(row, 2).data()
         t = index.sibling(row, 1).data()
         s = index.sibling(row, 2).data()
         p = index.sibling(row, 3).data()

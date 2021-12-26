@@ -6,20 +6,11 @@ from src.ConfigManager import ConfigManager
 from src.sql.DatabaseManager import DatabaseManager
 
 
-def initialize_db():
-    pass
-
-
-def check_db():
-    if not (exists(config_man.getDatabaseUri())):
-        print(config_man.getDatabaseUri())
-        initialize_db()
 
 
 if __name__ == "__main__":
     config_man = ConfigManager()              # Initialize the Config Manager
-    check_db()
-    database_man = DatabaseManager(config_man.getDatabaseUri())
+    database_man = DatabaseManager(config_man.getDatabasePath())
     app = QApplication(sys.argv)
     win = MainWindow()
     win.show()

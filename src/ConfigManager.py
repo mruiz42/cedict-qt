@@ -12,6 +12,6 @@ class ConfigManager:
         self.config = ConfigParser()
         self.config.read(CONFIG_URI)
 
-    def getDatabaseUri(self) -> str:
-        return self.config["DEBUG"].get("SQLALCHEMY_DATABASE_URI")
+    def getDatabasePath(self) -> str:
+        return self.config["DEBUG"].get("SQLALCHEMY_DATABASE_PATH")
 

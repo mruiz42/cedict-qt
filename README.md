@@ -3,6 +3,10 @@ Chinese-English Dictionary for Windows, MacOSX and Linux.
 
 A simple GUI interface written in PySide2 for the CC-CEDICT project.
 
+### Starting development instance
+`pipenv install`
+`pipenv run python main.py`
+
 Dependencies:
 
 PySide2

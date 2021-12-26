@@ -1,14 +1,14 @@
-from MainWindow import *
-from PySide2.QtCore import *
-from PySide2.QtWidgets import *
-from PySide2.QtSql import *
+from src.ui.MainWindow import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtSql import *
 import re
-from gtts import gTTS
+# from gtts import gTTS
 from random import randint
-from io import BytesIO
-from playsound import playsound
-import simpleaudio as sa
-from pydub import AudioSegment
+
+
+# from playsound import playsound
+# import simpleaudio as sa
+# from pydub import AudioSegment
 
 
 class MainWindow(QMainWindow):
@@ -16,77 +16,77 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.tts = gTTS("nihao", "zh-cn")
-        self.s = ""
-        self.mp3_fp = BytesIO()
-        self.db = QSqlDatabase.addDatabase("QSQLITE", "SQLITE")
-        self.db.setDatabaseName("dictionary.db")
-        self.db.open()
-        print(self.db.lastError())
+        # self.tts = gTTS("nihao", "zh-cn")
+        # self.s = ""
+        # self.mp3_fp = BytesIO()
+        # self.db = QSqlDatabase.addDatabase("QSQLITE", "SQLITE")
+        # self.db.setDatabaseName("dictionary.db")
+        # self.db.open()
+        # print(self.db.lastError())
         self.model = QSqlQueryModel()
-        self.model.setQuery("SELECT * FROM WORD_LIST", self.db)
+        # self.model.setQuery("SELECT * FROM WORD_LIST", self.db)
 
         # self.tab = QSqlTableModel(self.ui.tableView, self.db)
         # self.tab.setTable("WORD_LIST")
         # self.tab.setEditStrategy(QSqlTableModel.OnFieldChange)
         # self.tab.select()
         self.ui.tableView.setModel(self.model)
-        self.ui.tableView.setColumnHidden(0,True)
-        self.ui.tableView.clicked.connect(self.getRowData)
+        self.ui.tableView.setColumnHidden(0, True)
+        # self.ui.tableView.clicked.connect(self.getRowData)
         self.ui.tableView.setColumnWidth(4, 80)
         self.ui.tableView.setColumnWidth(4, 320)
-        self.ui.lineEdit_query.textChanged.connect(self.queryAction)
+        # self.ui.lineEdit_query.textChanged.connect(self.queryAction)
         # self.ui.tableView.
-        self.ui.pushButton_search.clicked.connect(self.queryAction)
-        self.ui.pushButton_audio.clicked.connect(self.playButtonAction)
+        # self.ui.pushButton_search.clicked.connect(self.queryAction)
+        # self.ui.pushButton_audio.clicked.connect(self.playButtonAction)
         numRows = self.model.rowCount()
         self.ui.tableView.selectRow(randint(0, numRows))
         selection_model = self.ui.tableView.selectionModel()
-        selection_model.selectionChanged.connect(self.getRowData)
-        self.getRowData()
+        # selection_model.selectionChanged.connect(self.getRowData)
+        # self.getRowData()
         # self.ui.tableView.itemChanged.connect(self.queryAction)
         # self.ui.tableView.
         self.show()
-    def playButtonAction(self):
-        self.tts = gTTS(self.s, "zh-cn")
-        self.tts.save("out.mp3")
-        sound = AudioSegment.from_mp3("out.mp3")
-        sound.export("out.wav", format="wav")
-        wave_obj = sa.WaveObject.from_wave_file("out.wav")
-        play_obj = wave_obj.play()
-        play_obj.wait_done()
-        print(self.s, "Audio played")
 
-    def queryAction(self):
-        queryWord = self.ui.lineEdit_query.text()
-        command = ("SELECT * FROM WORD_LIST WHERE ENGLISH LIKE \"%" + queryWord + "%\""
-                   "OR SIMPLIFIED LIKE \"%" + queryWord + "%\""
-                   "OR TRADITIONAL LIKE \"%" + queryWord + "%\""
-                   "OR PINYIN LIKE \"%" + queryWord + "%\"")
-        print(command)
-        self.model.setQuery(command, self.db)
-        self.ui.tableView.setModel(self.model)
-        self.ui.tableView.selectRow(0)
-        self.getRowData()
-    def getRowData(self):
+    # def playButtonAction(self):
+    #     self.tts = gTTS(self.s, "zh-cn")
+    #     self.tts.save("out.mp3")
+    #     sound = AudioSegment.from_mp3("out.mp3")
+    #     sound.export("out.wav", format="wav")
+    #     wave_obj = sa.WaveObject.from_wave_file("out.wav")
+    #     play_obj = wave_obj.play()
+    #     play_obj.wait_done()
+    #     print(self.s, "Audio played")
 
-        index = self.ui.tableView.currentIndex()
-        row = index.row()
-        self.s = index.sibling(row, 2).data()
-        t = index.sibling(row, 1).data()
-        s = index.sibling(row, 2).data()
-        p = index.sibling(row, 3).data()
-        e = index.sibling(row, 4).data()
-        defList = e.split("/")
-        e = ""
-        for i in range (0, len(defList)):
-            e += str((i+1)) + ". " + defList[i] + "\n"
-        n = decode_pinyin(p)
-        self.ui.label_hanzi.setText(t + "\n" + s)
-        self.ui.label_pinyin.setText(n)
-        self.ui.label_english.setText(e)
+    # def queryAction(self):
+    #     queryWord = self.ui.lineEdit_query.text()
+    #     command = ("SELECT * FROM WORD_LIST WHERE ENGLISH LIKE \"%" + queryWord + "%\""
+    #                "OR SIMPLIFIED LIKE \"%" + queryWord + "%\""
+    #                "OR TRADITIONAL LIKE \"%" + queryWord + "%\""
+    #                "OR PINYIN LIKE \"%" + queryWord + "%\"")
+    #     print(command)
+    #     self.model.setQuery(command, self.db)
+    #     self.ui.tableView.setModel(self.model)
+    #     self.ui.tableView.selectRow(0)
+    #     self.getRowData()
 
-
+    # def getRowData(self):
+    #     index = self.ui.tableView.currentIndex()
+    #     row = index.row()
+    #     self.s = index.sibling(row, 2).data()
+    #     t = index.sibling(row, 1).data()
+    #     s = index.sibling(row, 2).data()
+    #     p = index.sibling(row, 3).data()
+    #     e = index.sibling(row, 4).data()
+    #     defList = e.split("/")
+    #     defList = e.split("/")
+    #     e = ""
+    #     for i in range (0, len(defList)):
+    #         e += str((i+1)) + ". " + defList[i] + "\n"
+    #     n = decode_pinyin(p)
+    #     self.ui.label_hanzi.setText(t + "\n" + s)
+    #     self.ui.label_pinyin.setText(n)
+    #     self.ui.label_english.setText(e)
 
 PinyinToneMark = {
     0: "aoeiuv\u00fc",
@@ -132,10 +132,3 @@ def decode_pinyin(s):
             t = ""
     r += t
     return r
-
-if __name__ == "__main__":
-    app = QApplication()
-    win = MainWindow()
-    win.show()
-
-    exit(app.exec_())

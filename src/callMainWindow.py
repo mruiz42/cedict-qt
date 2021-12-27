@@ -1,3 +1,5 @@
+from src import ConfigManager
+from src.sql import DatabaseManager
 from src.ui.MainWindow import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtSql import *
@@ -12,31 +14,34 @@ from random import randint
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, database_man: DatabaseManager, config_man: ConfigManager):
         super().__init__()
+        self.db_man = database_man
+        self.cfg_man = config_man
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        # TODO: TTS Broken, pls fix
         # self.tts = gTTS("nihao", "zh-cn")
         # self.s = ""
         # self.mp3_fp = BytesIO()
-        # self.db = QSqlDatabase.addDatabase("QSQLITE", "SQLITE")
-        # self.db.setDatabaseName("dictionary.db")
-        # self.db.open()
-        # print(self.db.lastError())
-        self.model = QSqlQueryModel()
-        # self.model.setQuery("SELECT * FROM WORD_LIST", self.db)
+        self.db = QSqlDatabase.addDatabase("QSQLITE", "SQLITE")
+        self.db.setDatabaseName(self.db_man.get_db_path())
+        self.db.open()
 
-        # self.tab = QSqlTableModel(self.ui.tableView, self.db)
-        # self.tab.setTable("WORD_LIST")
-        # self.tab.setEditStrategy(QSqlTableModel.OnFieldChange)
-        # self.tab.select()
+        self.model = QSqlQueryModel()
+        self.model.setQuery(self.db_man.get_all_dictionary_entries_stmt(), self.db)
+
+        self.table = QSqlTableModel(self.ui.tableView, self.db)
+        self.table.setTable("dictionary_entry")
+        self.table.setEditStrategy(QSqlTableModel.OnFieldChange)
+        self.table.select()
+
         self.ui.tableView.setModel(self.model)
         self.ui.tableView.setColumnHidden(0, True)
         # self.ui.tableView.clicked.connect(self.getRowData)
         self.ui.tableView.setColumnWidth(4, 80)
         self.ui.tableView.setColumnWidth(4, 320)
         # self.ui.lineEdit_query.textChanged.connect(self.queryAction)
-        # self.ui.tableView.
         # self.ui.pushButton_search.clicked.connect(self.queryAction)
         # self.ui.pushButton_audio.clicked.connect(self.playButtonAction)
         numRows = self.model.rowCount()

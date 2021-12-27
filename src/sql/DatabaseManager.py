@@ -8,7 +8,7 @@ from zipfile import ZipFile
 from sqlalchemy import create_engine, text, Column, Integer, String
 from sqlalchemy.orm import declarative_base, Session
 
-from src.sql.tabledef import DictionaryEntry as Entry, ApplicationMeta as Meta, Base
+from src.sql.tabledef import DictionaryWord as Word, ApplicationMeta as AppMeta, Base
 
 # TODO: CEDICT FILE LOCATION IMPORT
 cedict_file = "./res/data/cedict_ts.u8"
@@ -42,19 +42,22 @@ class DatabaseManager:
                 exit(100)
                 # TODO: Handle this case better
             else:
-                print("Database version", self._application_metadata.program_version)
+                print("Database version", self._application_metadata.application_version)
 
 
-    def _get_db_metadata(self) -> Meta:
+    def _get_db_metadata(self) -> AppMeta:
         session = Session(self._sql_engine)
         obj = None
         try:
             # https://stackoverflow.com/questions/8551952/how-to-get-last-record
-            metadata = session.query(Meta).order_by(Meta.id.desc()).first()
+            metadata = session.query(AppMeta).order_by(AppMeta.id.desc()).first()
+            return metadata
         except:
             print("Error getting metadata")
+            #TODO Temp fix when uninitalized Database
+            Base.metadata.create_all(self._sql_engine)
+            self._populate_database()
         session.close()
-        return metadata
 
     def _db_exists(self) -> bool:
         return exists(self.db_path)
@@ -84,14 +87,14 @@ class DatabaseManager:
                 english = line[englishPos + 1:-2]  # .split("/")
                 # for i in englishList:
                 #   e.append(i)
-                new_word = Entry(traditional, simplified, pinyin, english)
+                new_word = Word(traditional, simplified, pinyin, english)
                 session.add(new_word)
                 num_entries += 1
                 # if (num_entries % 1000 == 0):
                 #     session.commit() # commit every 1000 entries
         session.commit()
         # insert metadata
-        program_version = PROGRAM_VER
+        application_version = PROGRAM_VER
         database_version = DATABASE_VER
         cedict_version = metadata["version"] + "." + metadata["subversion"]
         db_creation_time = datetime.utcnow()
@@ -100,7 +103,7 @@ class DatabaseManager:
         entries = int(metadata["entries"])
         cedict_license = metadata["license"]
         cedict_publisher = metadata["publisher"]
-        new_meta = Meta(program_version, database_version, cedict_version,
+        new_meta = AppMeta(application_version, database_version, cedict_version,
                         db_creation_time, cedict_creation_time, entries,
                         cedict_license, cedict_publisher)
         session.add(new_meta)
@@ -123,3 +126,10 @@ class DatabaseManager:
         # os.removedirs(temp_dir)
         return cedict_path
 
+    # Public methods
+    def get_all_dictionary_entries_stmt(self) -> str:
+        stmt = "SELECT * FROM DICTIONARY"
+        return stmt
+
+    def get_db_path(self):
+        return self.db_path

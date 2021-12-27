@@ -12,6 +12,6 @@ if __name__ == "__main__":
     config_man = ConfigManager()              # Initialize the Config Manager
     database_man = DatabaseManager(config_man.getDatabasePath())
     app = QApplication(sys.argv)
-    win = MainWindow()
+    win = MainWindow(database_man, config_man)
     win.show()
     exit(app.exec_())

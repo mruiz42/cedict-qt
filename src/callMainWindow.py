@@ -38,18 +38,18 @@ class MainWindow(QMainWindow):
 
         self.ui.tableView.setModel(self.model)
         self.ui.tableView.setColumnHidden(0, True)
-        # self.ui.tableView.clicked.connect(self.getRowData)
-        self.ui.tableView.setColumnWidth(4, 80)
+        self.ui.tableView.clicked.connect(self.getRowData)
+        self.ui.tableView.setColumnWidth(3, 80)
         self.ui.tableView.setColumnWidth(4, 320)
-        # self.ui.lineEdit_query.textChanged.connect(self.queryAction)
-        # self.ui.pushButton_search.clicked.connect(self.queryAction)
+        self.ui.lineEdit_query.textChanged.connect(self.queryAction)
+        self.ui.pushButton_search.clicked.connect(self.queryAction)
         # self.ui.pushButton_audio.clicked.connect(self.playButtonAction)
         numRows = self.model.rowCount()
         self.ui.tableView.selectRow(randint(0, numRows))
         selection_model = self.ui.tableView.selectionModel()
-        # selection_model.selectionChanged.connect(self.getRowData)
-        # self.getRowData()
-        # self.ui.tableView.itemChanged.connect(self.queryAction)
+        selection_model.selectionChanged.connect(self.getRowData)
+        self.getRowData()
+        # self.ui.tableView.changeEvent.connect(self.queryAction)
         # self.ui.tableView.
         self.show()
 
@@ -63,35 +63,34 @@ class MainWindow(QMainWindow):
     #     play_obj.wait_done()
     #     print(self.s, "Audio played")
 
-    # def queryAction(self):
-    #     queryWord = self.ui.lineEdit_query.text()
-    #     command = ("SELECT * FROM WORD_LIST WHERE ENGLISH LIKE \"%" + queryWord + "%\""
-    #                "OR SIMPLIFIED LIKE \"%" + queryWord + "%\""
-    #                "OR TRADITIONAL LIKE \"%" + queryWord + "%\""
-    #                "OR PINYIN LIKE \"%" + queryWord + "%\"")
-    #     print(command)
-    #     self.model.setQuery(command, self.db)
-    #     self.ui.tableView.setModel(self.model)
-    #     self.ui.tableView.selectRow(0)
-    #     self.getRowData()
+    def queryAction(self):
+        queryWord = self.ui.lineEdit_query.text()
+        command = ("SELECT * FROM DICTIONARY WHERE ENGLISH LIKE \"%" + queryWord + "%\""
+                   "OR SIMPLIFIED LIKE \"%" + queryWord + "%\""
+                   "OR TRADITIONAL LIKE \"%" + queryWord + "%\""
+                   "OR PINYIN LIKE \"%" + queryWord + "%\"")
+        self.model.setQuery(command, self.db)
+        self.ui.tableView.setModel(self.model)
+        self.ui.tableView.selectRow(0)
+        self.getRowData()
 
-    # def getRowData(self):
-    #     index = self.ui.tableView.currentIndex()
-    #     row = index.row()
-    #     self.s = index.sibling(row, 2).data()
-    #     t = index.sibling(row, 1).data()
-    #     s = index.sibling(row, 2).data()
-    #     p = index.sibling(row, 3).data()
-    #     e = index.sibling(row, 4).data()
-    #     defList = e.split("/")
-    #     defList = e.split("/")
-    #     e = ""
-    #     for i in range (0, len(defList)):
-    #         e += str((i+1)) + ". " + defList[i] + "\n"
-    #     n = decode_pinyin(p)
-    #     self.ui.label_hanzi.setText(t + "\n" + s)
-    #     self.ui.label_pinyin.setText(n)
-    #     self.ui.label_english.setText(e)
+    def getRowData(self):
+        index = self.ui.tableView.currentIndex()
+        row = index.row()
+        self.s = index.sibling(row, 2).data()
+        traditional = index.sibling(row, 1).data()
+        simplified = index.sibling(row, 2).data()
+        pinyin = index.sibling(row, 3).data()
+        english = index.sibling(row, 4).data()
+        defList = english.split("/")
+        defList = english.split("/")
+        english = ""
+        for i in range (0, len(defList)):
+            english += str((i+1)) + ". " + defList[i] + "\n"
+        n = decode_pinyin(pinyin)
+        self.ui.label_hanzi.setText(traditional + "\n" + simplified)
+        self.ui.label_pinyin.setText(n)
+        self.ui.label_english.setText(english)
 
 PinyinToneMark = {
     0: "aoeiuv\u00fc",

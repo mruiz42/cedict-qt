@@ -14,48 +14,60 @@ from random import randint
 
 
 class MainWindow(QMainWindow):
+    db_mgr = None           # Database manager object
+    cfg_mgr = None          # Configuration manager object
+    ui = None               # MainWindow object
+    db = None               # Database connection for making raw sql queries
+    model = None            # QSqlQueryModel object
+    table = None            # QSqlTableModel object
+    selection = None        # Selected entry in the database
 
     def __init__(self, database_mgr: DatabaseManager, config_mgr: ConfigManager):
         super().__init__()
         self.db_mgr = database_mgr
         self.cfg_mgr = config_mgr
         self.ui = Ui_MainWindow()
-        print(self.size())
         self.ui.setupUi(self)
         # TODO: TTS Broken, pls fix
         # self.tts = gTTS("nihao", "zh-cn")
         # self.s = ""
         # self.mp3_fp = BytesIO()
+
+        self._setup_database_conn()
+        self._setup_table()
+        self._setup_actions()
+        self._preload_random_entry()
+        # self.ui.pushButton_audio.clicked.connect(self.playButtonAction)
+        self.getRowData()
+        self.show()
+
+    def _preload_random_entry(self):
+        self.ui.tableView.selectRow(randint(0, self.model.rowCount()))
+
+    def _setup_database_conn(self):
         self.db = QSqlDatabase.addDatabase("QSQLITE", "SQLITE")
         self.db.setDatabaseName(self.db_mgr.get_db_path())
         self.db.open()
 
+    def _setup_table(self):
         self.model = QSqlQueryModel()
         self.model.setQuery(self.db_mgr.get_all_dictionary_entries_stmt(), self.db)
-
         self.table = QSqlTableModel(self.ui.tableView, self.db)
         self.table.setTable("dictionary_entry")
         self.table.setEditStrategy(QSqlTableModel.OnFieldChange)
         self.table.select()
-
-        self._setup_table()
-        self.ui.lineEdit_query.textChanged.connect(self.queryAction)
-        self.ui.pushButton_search.clicked.connect(self.queryAction)
-        # self.ui.pushButton_audio.clicked.connect(self.playButtonAction)
-        numRows = self.model.rowCount()
-        self.ui.tableView.selectRow(randint(0, numRows))
-        selection_model = self.ui.tableView.selectionModel()
-        selection_model.selectionChanged.connect(self.getRowData)
-        self.getRowData()
-        # self.ui.tableView.changeEvent.connect(self.queryAction)
-        # self.ui.tableView.
-        self.show()
-
-    def _setup_table(self):
         self.ui.tableView.setModel(self.model)
         self.ui.tableView.setColumnHidden(0, True)
         self.ui.tableView.clicked.connect(self.getRowData)
         self.ui.tableView.setColumnWidth(3, 80)
+        self.selection = self.ui.tableView.selectionModel()
+
+
+    def _setup_actions(self):
+        self.ui.lineEdit_query.textChanged.connect(self.queryAction)
+        self.ui.pushButton_search.clicked.connect(self.queryAction)
+        self.selection.selectionChanged.connect(self.getRowData)
+
 
     def playButtonAction(self) -> None:
         """

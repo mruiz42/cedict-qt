@@ -53,15 +53,21 @@ class MainWindow(QMainWindow):
         # self.ui.tableView.
         self.show()
 
-    # def playButtonAction(self):
-    #     self.tts = gTTS(self.s, "zh-cn")
-    #     self.tts.save("out.mp3")
-    #     sound = AudioSegment.from_mp3("out.mp3")
-    #     sound.export("out.wav", format="wav")
-    #     wave_obj = sa.WaveObject.from_wave_file("out.wav")
-    #     play_obj = wave_obj.play()
-    #     play_obj.wait_done()
-    #     print(self.s, "Audio played")
+    def playButtonAction(self) -> None:
+        """
+        ** DEPRECIATED **
+        This function no longer works
+        :return: Nothing.
+        """
+        # self.tts = gTTS(self.s, "zh-cn")
+        # self.tts.save("out.mp3")
+        # sound = AudioSegment.from_mp3("out.mp3")
+        # sound.export("out.wav", format="wav")
+        # wave_obj = sa.WaveObject.from_wave_file("out.wav")
+        # play_obj = wave_obj.play()
+        # play_obj.wait_done()
+        # print(self.s, "Audio played")
+        pass
 
     def queryAction(self):
         queryWord = self.ui.lineEdit_query.text()
@@ -81,16 +87,16 @@ class MainWindow(QMainWindow):
         traditional = index.sibling(row, 1).data()
         simplified = index.sibling(row, 2).data()
         pinyin = index.sibling(row, 3).data()
-        english = index.sibling(row, 4).data()
-        defList = english.split("/")
-        defList = english.split("/")
-        english = ""
+        definition = index.sibling(row, 4).data()
+        defList = definition.split("/")
+        defList = definition.split("/")
+        definition = ""
         for i in range (0, len(defList)):
-            english += str((i+1)) + ". " + defList[i] + "\n"
+            definition += str((i+1)) + ". " + defList[i] + "\n"
         n = decode_pinyin(pinyin)
-        self.ui.label_hanzi.setText(traditional + "\n" + simplified)
+        self.ui.label_hanzi.setText(traditional + "/" + simplified)
         self.ui.label_pinyin.setText(n)
-        self.ui.label_english.setText(english)
+        self.ui.label_definition.setText(definition)
 
 PinyinToneMark = {
     0: "aoeiuv\u00fc",

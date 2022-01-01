@@ -38,11 +38,7 @@ class MainWindow(QMainWindow):
         self.table.setEditStrategy(QSqlTableModel.OnFieldChange)
         self.table.select()
 
-        self.ui.tableView.setModel(self.model)
-        self.ui.tableView.setColumnHidden(0, True)
-        self.ui.tableView.clicked.connect(self.getRowData)
-        self.ui.tableView.setColumnWidth(3, 80)
-        self.ui.tableView.setColumnWidth(4, 320)
+        self._setup_table()
         self.ui.lineEdit_query.textChanged.connect(self.queryAction)
         self.ui.pushButton_search.clicked.connect(self.queryAction)
         # self.ui.pushButton_audio.clicked.connect(self.playButtonAction)
@@ -54,6 +50,12 @@ class MainWindow(QMainWindow):
         # self.ui.tableView.changeEvent.connect(self.queryAction)
         # self.ui.tableView.
         self.show()
+
+    def _setup_table(self):
+        self.ui.tableView.setModel(self.model)
+        self.ui.tableView.setColumnHidden(0, True)
+        self.ui.tableView.clicked.connect(self.getRowData)
+        self.ui.tableView.setColumnWidth(3, 80)
 
     def playButtonAction(self) -> None:
         """

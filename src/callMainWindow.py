@@ -14,6 +14,7 @@ from random import randint
 
 
 class MainWindow(QMainWindow):
+
     def __init__(self, database_man: DatabaseManager, config_man: ConfigManager):
         super().__init__()
         self.db_man = database_man
@@ -34,6 +35,7 @@ class MainWindow(QMainWindow):
         self.table = QSqlTableModel(self.ui.tableView, self.db)
         self.table.setTable("dictionary_entry")
         self.table.setEditStrategy(QSqlTableModel.OnFieldChange)
+
         self.table.select()
 
         self.ui.tableView.setModel(self.model)

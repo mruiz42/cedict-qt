@@ -15,27 +15,27 @@ from random import randint
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, database_man: DatabaseManager, config_man: ConfigManager):
+    def __init__(self, database_mgr: DatabaseManager, config_mgr: ConfigManager):
         super().__init__()
-        self.db_man = database_man
-        self.cfg_man = config_man
+        self.db_mgr = database_mgr
+        self.cfg_mgr = config_mgr
         self.ui = Ui_MainWindow()
+        print(self.size())
         self.ui.setupUi(self)
         # TODO: TTS Broken, pls fix
         # self.tts = gTTS("nihao", "zh-cn")
         # self.s = ""
         # self.mp3_fp = BytesIO()
         self.db = QSqlDatabase.addDatabase("QSQLITE", "SQLITE")
-        self.db.setDatabaseName(self.db_man.get_db_path())
+        self.db.setDatabaseName(self.db_mgr.get_db_path())
         self.db.open()
 
         self.model = QSqlQueryModel()
-        self.model.setQuery(self.db_man.get_all_dictionary_entries_stmt(), self.db)
+        self.model.setQuery(self.db_mgr.get_all_dictionary_entries_stmt(), self.db)
 
         self.table = QSqlTableModel(self.ui.tableView, self.db)
         self.table.setTable("dictionary_entry")
         self.table.setEditStrategy(QSqlTableModel.OnFieldChange)
-
         self.table.select()
 
         self.ui.tableView.setModel(self.model)

@@ -13,8 +13,8 @@ from src.sql.tabledef import DictionaryWord as Word, ApplicationMeta as AppMeta,
 # TODO: CEDICT FILE LOCATION IMPORT
 cedict_file = "./res/data/cedict_ts.u8"
 # TODO: Centralize location for program version
-PROGRAM_VER = "0.2"
-DATABASE_VER = "0.1"
+PROGRAM_VER = "0.3"
+DATABASE_VER = "0.3"
 
 
 class DatabaseManager:

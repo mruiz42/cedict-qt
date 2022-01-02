@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1180</width>
-    <height>720</height>
+    <width>1096</width>
+    <height>685</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -33,9 +33,37 @@
          </widget>
         </item>
         <item>
+         <widget class="QToolButton" name="toolButton_search">
+          <property name="text">
+           <string>Search</string>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::MenuButtonPopup</enum>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextOnly</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="pushButton_search">
           <property name="text">
            <string>Search</string>
+          </property>
+          <property name="autoDefault">
+           <bool>true</bool>
+          </property>
+          <property name="default">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -108,43 +136,108 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>1066</width>
-              <height>294</height>
+              <width>982</width>
+              <height>321</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_labelArea">
                <item>
-                <widget class="QLabel" name="label_hanzi">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <family>Noto Sans</family>
-                   <pointsize>42</pointsize>
-                  </font>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::ClickFocus</enum>
-                 </property>
-                 <property name="text">
-                  <string>Hanzi</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>true</bool>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="horizontalLayout_hanzi_splitter">
+                 <item>
+                  <widget class="QGroupBox" name="groupbox_traditional">
+                   <property name="title">
+                    <string>Traditional</string>
+                   </property>
+                   <property name="flat">
+                    <bool>true</bool>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_splitter_traditional">
+                    <item>
+                     <widget class="QLabel" name="label_hanzi_traditional">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>Noto Sans</family>
+                        <pointsize>42</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Traditional Hanzi</string>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QGroupBox" name="groupBox_simplified">
+                   <property name="font">
+                    <font>
+                     <weight>50</weight>
+                     <italic>false</italic>
+                     <bold>false</bold>
+                     <kerning>true</kerning>
+                    </font>
+                   </property>
+                   <property name="title">
+                    <string>Simplified</string>
+                   </property>
+                   <property name="flat">
+                    <bool>true</bool>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_splitter_simplified">
+                    <item>
+                     <widget class="QLabel" name="label_hanzi_simplified">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>Noto Sans</family>
+                        <pointsize>42</pointsize>
+                        <weight>50</weight>
+                        <italic>false</italic>
+                        <bold>false</bold>
+                        <kerning>true</kerning>
+                       </font>
+                      </property>
+                      <property name="focusPolicy">
+                       <enum>Qt::ClickFocus</enum>
+                      </property>
+                      <property name="text">
+                       <string>Simplified Hanzi</string>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
                 <widget class="QLabel" name="label_pinyin">
@@ -268,7 +361,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1180</width>
+     <width>1096</width>
      <height>27</height>
     </rect>
    </property>
@@ -282,6 +375,17 @@
     <property name="title">
      <string>View</string>
     </property>
+    <widget class="QMenu" name="menuColumns">
+     <property name="title">
+      <string>Columns</string>
+     </property>
+     <addaction name="actionPinyin"/>
+     <addaction name="actionTraditional"/>
+     <addaction name="actionSimplified"/>
+     <addaction name="separator"/>
+     <addaction name="actionAll"/>
+    </widget>
+    <addaction name="menuColumns"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -321,6 +425,38 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionPinyin">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pinyin</string>
+   </property>
+  </action>
+  <action name="actionAll">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show All</string>
+   </property>
+  </action>
+  <action name="actionTraditional">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Traditional</string>
+   </property>
+  </action>
+  <action name="actionSimplified">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Simplified</string>
    </property>
   </action>
  </widget>

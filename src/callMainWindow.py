@@ -1,3 +1,5 @@
+import sys
+
 from src import ConfigManager
 from src.sql import DatabaseManager
 from src.ui.MainWindow import *
@@ -32,7 +34,7 @@ class MainWindow(QMainWindow):
         # self.tts = gTTS("nihao", "zh-cn")
         # self.s = ""
         # self.mp3_fp = BytesIO()
-
+        self._setup_preferences()
         self._setup_database_conn()
         self._setup_table()
         self._setup_actions()
@@ -68,6 +70,24 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_search.clicked.connect(self.queryAction)
         self.selection.selectionChanged.connect(self.getRowData)
 
+    def _setup_preferences(self):
+        # Setup column menu actions
+        is_show_traditional = self.cfg_mgr.getShowTraditional()
+        is_show_simplified = self.cfg_mgr.getShowSimplified()
+        is_show_pinyin = self.cfg_mgr.getShowPinyin()
+        self.ui.actionTraditional.setChecked(is_show_traditional)
+        self.ui.actionSimplified.setChecked(is_show_simplified)
+        self.ui.actionPinyin.setChecked(is_show_pinyin)
+        if is_show_pinyin and is_show_traditional and is_show_simplified:
+            self.ui.actionAll.setChecked(True)
+        else:
+            self.ui.actionAll.setChecked(False)
+        # Action listeners
+        self.ui.actionExit.triggered.connect(self._signal_exit)
+        self.ui.actionAll.triggered.connect(self._signal_toggleShowAll)
+        self.ui.actionPinyin.triggered.connect(self._signal_toggleShowPinyin)
+        self.ui.actionSimplified.triggered.connect(self._signal_toggleShowSimplified)
+        self.ui.actionTraditional.triggered.connect(self._signal_toggleShowTraditional)
 
     def playButtonAction(self) -> None:
         """
@@ -110,9 +130,44 @@ class MainWindow(QMainWindow):
         for i in range (0, len(defList)):
             definition += str((i+1)) + ". " + defList[i] + "\n"
         n = decode_pinyin(pinyin)
-        self.ui.label_hanzi.setText(traditional + "/" + simplified)
+        self.ui.label_hanzi_traditional.setText(traditional)
+        self.ui.label_hanzi_simplified.setText(simplified)
         self.ui.label_pinyin.setText(n)
         self.ui.label_definition.setText(definition)
+
+    def _signal_toggleShowAll(self):
+        # TODO: This doesnt really work
+        current_state = self.ui.actionAll.isChecked()
+        self.ui.actionAll.setChecked(current_state)
+        self.ui.actionSimplified.setChecked(current_state)
+        self.ui.actionTraditional.setChecked(current_state)
+        self.ui.actionPinyin.setChecked(current_state)
+        current_state = not current_state
+        self.ui.label_pinyin.setHidden(current_state)
+        self.ui.tableView.setColumnHidden(3, current_state)
+        self.ui.groupbox_traditional.setHidden(current_state)
+        self.ui.tableView.setColumnHidden(1, current_state)
+        self.ui.groupBox_simplified.setHidden(current_state)
+        self.ui.tableView.setColumnHidden(2, current_state)
+
+    def _signal_toggleShowPinyin(self):
+        current_state = self.ui.label_pinyin.isHidden()
+        self.ui.label_pinyin.setHidden(not current_state)
+        self.ui.tableView.setColumnHidden(3, not current_state)
+
+    def _signal_toggleShowTraditional(self):
+        current_state = self.ui.label_hanzi_traditional.isHidden()
+        self.ui.groupbox_traditional.setHidden(not current_state)
+        self.ui.tableView.setColumnHidden(1, not current_state)
+
+    def _signal_toggleShowSimplified(self):
+        current_state = self.ui.label_hanzi_simplified.isHidden()
+        self.ui.groupBox_simplified.setHidden(not current_state)
+        self.ui.tableView.setColumnHidden(2, not current_state)
+
+
+    def _signal_exit(self):
+        sys.exit(0)
 
 PinyinToneMark = {
     0: "aoeiuv\u00fc",

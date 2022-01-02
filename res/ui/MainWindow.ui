@@ -199,6 +199,21 @@
                     <bool>false</bool>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_splitter_simplified">
+                    <property name="spacing">
+                     <number>2</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>2</number>
+                    </property>
                     <item>
                      <widget class="QLabel" name="label_hanzi_simplified">
                       <property name="sizePolicy">
@@ -287,7 +302,7 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_definition">
+                <widget class="QLabel" name="label_english">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -304,7 +319,7 @@
                   <enum>Qt::ClickFocus</enum>
                  </property>
                  <property name="text">
-                  <string>Definition</string>
+                  <string>English</string>
                  </property>
                  <property name="scaledContents">
                   <bool>true</bool>
@@ -379,9 +394,10 @@
      <property name="title">
       <string>Columns</string>
      </property>
-     <addaction name="actionPinyin"/>
      <addaction name="actionTraditional"/>
      <addaction name="actionSimplified"/>
+     <addaction name="actionPinyin"/>
+     <addaction name="actionEnglish"/>
      <addaction name="separator"/>
      <addaction name="actionAll"/>
     </widget>
@@ -457,6 +473,14 @@
    </property>
    <property name="text">
     <string>Simplified</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>English</string>
    </property>
   </action>
  </widget>

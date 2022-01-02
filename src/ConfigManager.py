@@ -40,6 +40,9 @@ class ConfigManager:
     def getShowPinyin(self) -> bool:
         return self.config.getboolean(self.section, "SHOW_PINYIN")
 
+    def getShowEnglish(self) -> bool:
+        return self.config.getboolean(self.section, "SHOW_ENGLISH")
+
     def set(self, section: str, key: str, val: str) -> bool:
         """
         Updates a specific key in the configuration file to a given value.

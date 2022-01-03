@@ -3,6 +3,7 @@ import sys
 from src import ConfigManager
 from src.sql import DatabaseManager
 from src.ui.MainWindow import *
+from src.callPreferencesDialog import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtSql import *
 import re
@@ -34,7 +35,7 @@ class MainWindow(QMainWindow):
         # self.tts = gTTS("nihao", "zh-cn")
         # self.s = ""
         # self.mp3_fp = BytesIO()
-        self._setup_preferences()
+        self.__setup_configuration()
         self._setup_database_conn()
         self._setup_table()
         self._setup_actions()
@@ -64,8 +65,8 @@ class MainWindow(QMainWindow):
         self.ui.tableView.setColumnWidth(3, 80)
         self.selection = self.ui.tableView.selectionModel()
 
-
-    def _setup_actions(self):        # Action listeners
+    def _setup_actions(self):
+        # Action listeners
         self.ui.actionExit.triggered.connect(self._signal_exit)
         self.ui.actionAll.triggered.connect(self._signal_toggleShowAll)
         self.ui.actionPinyin.triggered.connect(self._signal_toggleShowPinyin)
@@ -75,8 +76,9 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_query.textChanged.connect(self.queryAction)
         self.ui.pushButton_search.clicked.connect(self.queryAction)
         self.selection.selectionChanged.connect(self.getRowData)
+        self.ui.actionPreferences.triggered.connect(self._signal_openPreferencesDialog)
 
-    def _setup_preferences(self):
+    def __setup_configuration(self):
         # Setup column menu actions
         is_show_traditional = self.cfg_mgr.getShowTraditional()
         is_show_simplified = self.cfg_mgr.getShowSimplified()
@@ -162,28 +164,33 @@ class MainWindow(QMainWindow):
         self.ui.tableView.setColumnHidden(2, current_state)
 
     def _signal_toggleShowPinyin(self):
-        current_state = self.ui.label_pinyin.isHidden()
+        current_state = self.ui.actionPinyin.isChecked()
         self.ui.label_pinyin.setHidden(not current_state)
         self.ui.tableView.setColumnHidden(3, not current_state)
         self._hook_showAllCheck()
 
     def _signal_toggleShowTraditional(self):
-        current_state = self.ui.label_hanzi_traditional.isHidden()
+        current_state = self.ui.actionTraditional.isChecked()
         self.ui.groupbox_traditional.setHidden(not current_state)
         self.ui.tableView.setColumnHidden(1, not current_state)
         self._hook_showAllCheck()
 
     def _signal_toggleShowSimplified(self):
-        current_state = self.ui.label_hanzi_simplified.isHidden()
+        current_state = self.ui.actionSimplified.isChecked()
         self.ui.groupBox_simplified.setHidden(not current_state)
         self.ui.tableView.setColumnHidden(2, not current_state)
         self._hook_showAllCheck()
 
     def _signal_toggleShowEnglish(self):
-        current_state = self.ui.label_english.isHidden()
+        current_state = self.ui.actionEnglish.isChecked()
         self.ui.label_english.setHidden(not current_state)
         self.ui.tableView.setColumnHidden(4, not current_state)
         self._hook_showAllCheck()
+
+    def _signal_openPreferencesDialog(self):
+        dialog = PreferencesDialog(self.cfg_mgr, parent=self)
+        dialog.show()
+
 
     def _signal_exit(self):
         sys.exit(0)

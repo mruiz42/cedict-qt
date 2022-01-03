@@ -43,11 +43,10 @@ class ConfigManager:
     def getShowEnglish(self) -> bool:
         return self.config.getboolean(self.section, "SHOW_ENGLISH")
 
-    def set(self, section: str, key: str, val: str) -> bool:
+    def set(self, key: str, val: str) -> bool:
         """
         Updates a specific key in the configuration file to a given value.
         Note that commit must be called to write changes to config file!
-        :param section: The section in the configuration file. eg: DEBUG, INSTALL, PORTABLE
         :param key: The key to be updated.
         :param val: The new desired value.
         :return: Returns True on success.

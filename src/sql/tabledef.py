@@ -7,7 +7,7 @@ from datetime import datetime
 Base = declarative_base()
 
 # DATABASE TABLE DEFINITIONS ###############################################
-class DictionaryWord(Base):
+class Dictionary(Base):
     """
 
     """

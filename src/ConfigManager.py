@@ -16,32 +16,35 @@ class ConfigManager:
     def getSection(self):
         return self.section
 
-    def getStr(self, section: str, key: str) -> str:
-        return self.config[section].get(key)
+    def getStr(self, key: str) -> str:
+        return self.config[self.section].get(key)
 
-    def getBool(self, section: str, key: str) -> bool:
-        return self.config[section].getboolean(key)
+    def getBool(self, key: str) -> bool:
+        return self.config[self.section].getboolean(key)
+
+    def getInt(self, key: str) -> int:
+        return self.config[self.section].getint(key)
 
     def getDatabasePath(self) -> str:
-        return self.config[self.section].get("SQLALCHEMY_DATABASE_PATH")
+        return self.config[self.section].get("sqlalchemy_database_path")
 
     def getStartRandomized(self) -> bool:
-        return self.config.getboolean(self.section, "START_RANDOMIZED")
+        return self.config.getboolean(self.section, "start_randomized")
 
     def getShowAll(self) -> bool:
-        return self.config.getboolean(self.section, "SHOW_ALL")
+        return self.config.getboolean(self.section, "show_all")
 
     def getShowTraditional(self) -> bool:
-        return self.config.getboolean(self.section, "SHOW_TRADITIONAL")
+        return self.config.getboolean(self.section, "show_traditional")
 
     def getShowSimplified(self) -> bool:
-        return self.config.getboolean(self.section, "SHOW_SIMPLIFIED")
+        return self.config.getboolean(self.section, "show_simplified")
 
     def getShowPinyin(self) -> bool:
-        return self.config.getboolean(self.section, "SHOW_PINYIN")
+        return self.config.getboolean(self.section, "show_pinyin")
 
     def getShowEnglish(self) -> bool:
-        return self.config.getboolean(self.section, "SHOW_ENGLISH")
+        return self.config.getboolean(self.section, "show_english")
 
     def set(self, key: str, val: str) -> bool:
         """
@@ -51,13 +54,9 @@ class ConfigManager:
         :param val: The new desired value.
         :return: Returns True on success.
         """
-        try:
-            self.config.set(self.section, key, val)
-            return True
-        except ConfigParser.NoSectionError:
-            # TODO: Consider raising a new exception here for code portability
-            return False
 
+        self.config.set(self.section, key, val)
+        return True
     def setNow(self, section: str, key: str, val: str) -> bool:
         """
         Helper method for set() with autocommit

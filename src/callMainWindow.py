@@ -6,6 +6,7 @@ from src.ui.MainWindow import *
 from src.callPreferencesDialog import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtSql import *
+from PyQt5 import QtGui, QtCore
 import re
 # from gtts import gTTS
 from random import randint
@@ -31,10 +32,6 @@ class MainWindow(QMainWindow):
         self.cfg_mgr = config_mgr
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        # TODO: TTS Broken, pls fix
-        # self.tts = gTTS("nihao", "zh-cn")
-        # self.s = ""
-        # self.mp3_fp = BytesIO()
         self.__setup_configuration()
         self._setup_database_conn()
         self._setup_table()
@@ -44,8 +41,24 @@ class MainWindow(QMainWindow):
         self.getRowData()
         self.show()
 
+    def closeEvent(self, event) -> None:
+        """
+        Called when user exits the program and saves the session information.
+        :param event: QCloseEvent when application is being closed
+        :return: None
+        """
+        splitter_sizes = self.ui.splitter.sizes()
+        self.cfg_mgr.set("window_size_width", str(self.size().width()))
+        self.cfg_mgr.set("window_size_height", str(self.size().height()))
+        self.cfg_mgr.set("splitter_size_width", str(splitter_sizes[0]))
+        self.cfg_mgr.set("splitter_size_height", str(splitter_sizes[1]))
+        # self.cfg_mgr.set("last_visited_word", str(self.table.))
+        self.cfg_mgr.commit()
+        self.close()
+        sys.exit(0)
+
     def _preload_random_entry(self):
-        self.ui.tableView.selectRow(randint(0, self.model.rowCount()))
+        self.ui.tableView.selectRow(randint(0, self.db_mgr.dictionarySize()))
 
     def _setup_database_conn(self):
         self.db = QSqlDatabase.addDatabase("QSQLITE", "SQLITE")
@@ -67,7 +80,7 @@ class MainWindow(QMainWindow):
 
     def _setup_actions(self):
         # Action listeners
-        self.ui.actionExit.triggered.connect(self._signal_exit)
+        self.ui.actionExit.triggered.connect(self.closeEvent)
         self.ui.actionAll.triggered.connect(self._signal_toggleShowAll)
         self.ui.actionPinyin.triggered.connect(self._signal_toggleShowPinyin)
         self.ui.actionSimplified.triggered.connect(self._signal_toggleShowSimplified)
@@ -79,6 +92,14 @@ class MainWindow(QMainWindow):
         self.ui.actionPreferences.triggered.connect(self._signal_openPreferencesDialog)
 
     def __setup_configuration(self):
+        # Setup ui layout from previous session
+        window_width = self.cfg_mgr.getInt("window_size_width")
+        window_height = self.cfg_mgr.getInt("window_size_height")
+        splitter_width = self.cfg_mgr.getInt("splitter_size_width")
+        splitter_height = self.cfg_mgr.getInt("splitter_size_height")
+        self.resize(window_width, window_height)
+        splitter_sizes = [splitter_width, splitter_height]
+        self.ui.splitter.setSizes(splitter_sizes)
         # Setup column menu actions
         is_show_traditional = self.cfg_mgr.getShowTraditional()
         is_show_simplified = self.cfg_mgr.getShowSimplified()
@@ -192,10 +213,6 @@ class MainWindow(QMainWindow):
     def _signal_openPreferencesDialog(self):
         dialog = PreferencesDialog(self.cfg_mgr, parent=self)
         dialog.show()
-
-
-    def _signal_exit(self):
-        sys.exit(0)
 
 PinyinToneMark = {
     0: "aoeiuv\u00fc",

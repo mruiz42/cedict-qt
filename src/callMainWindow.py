@@ -165,6 +165,7 @@ class MainWindow(QMainWindow):
 
     def _signal_toggleShowPinyin(self):
         current_state = self.ui.actionPinyin.isChecked()
+        self.ui.groupBox_pinyin.setHidden(not current_state)
         self.ui.label_pinyin.setHidden(not current_state)
         self.ui.tableView.setColumnHidden(3, not current_state)
         self._hook_showAllCheck()
@@ -183,6 +184,7 @@ class MainWindow(QMainWindow):
 
     def _signal_toggleShowEnglish(self):
         current_state = self.ui.actionEnglish.isChecked()
+        self.ui.groupBox_english.setHidden(not current_state)
         self.ui.label_english.setHidden(not current_state)
         self.ui.tableView.setColumnHidden(4, not current_state)
         self._hook_showAllCheck()

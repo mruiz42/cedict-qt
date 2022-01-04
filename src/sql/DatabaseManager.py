@@ -8,13 +8,13 @@ from zipfile import ZipFile
 from sqlalchemy import create_engine, text, Column, Integer, String
 from sqlalchemy.orm import declarative_base, Session
 
-from src.sql.tabledef import Dictionary, ApplicationMeta as AppMeta, Base
+from src.sql.tabledef import DictionaryWord as Word, ApplicationMeta as AppMeta, Base
 
 # TODO: CEDICT FILE LOCATION IMPORT
 cedict_file = "./res/data/cedict_ts.u8"
 # TODO: Centralize location for program version
-PROGRAM_VER = "0.4"
-DATABASE_VER = "0.4"
+PROGRAM_VER = "0.3"
+DATABASE_VER = "0.3"
 
 
 class DatabaseManager:
@@ -22,7 +22,6 @@ class DatabaseManager:
     _sql_engine = None
     _uri = None
     _application_metadata = None
-    session = None
     def __init__(self, path: str): # TODO: DETERMINE IF DATABASE INTEGRITY EXIST
         """
         :param path: The path of the sqlite3 database file.
@@ -31,7 +30,6 @@ class DatabaseManager:
         # TODO: Detect if path absolute or relative to determine if 3 or 4 slashes are needed
         self._uri = "sqlite:///" + path
         self._sql_engine = create_engine(self._uri, echo=True)
-        session = Session(self._sql_engine)
 
         # TODO: DB Integrity check
         if not (self._db_exists() or self._get_db_metadata() == None):
@@ -46,9 +44,9 @@ class DatabaseManager:
             else:
                 print("Database version", self._application_metadata.application_version)
 
+
     def _get_db_metadata(self) -> AppMeta:
-        # session = Session(self._sql_engine)
-        session = self.session
+        session = Session(self._sql_engine)
         obj = None
         try:
             # https://stackoverflow.com/questions/8551952/how-to-get-last-record
@@ -59,14 +57,13 @@ class DatabaseManager:
             #TODO Temp fix when uninitalized Database
             Base.metadata.create_all(self._sql_engine)
             self._populate_database()
-        self.session.close()
+        session.close()
 
     def _db_exists(self) -> bool:
         return exists(self.db_path)
 
     def _populate_database(self) -> bool:
-        # session = Session(self._sql_engine)
-        session = self.session
+        session = Session(self._sql_engine)
         cedict_file = self._get_cedict_file()
         inputFile = open(cedict_file)
         metadata = dict()
@@ -90,7 +87,7 @@ class DatabaseManager:
                 english = line[englishPos + 1:-2]  # .split("/")
                 # for i in englishList:
                 #   e.append(i)
-                new_word = Dictionary(traditional, simplified, pinyin, english)
+                new_word = Word(traditional, simplified, pinyin, english)
                 session.add(new_word)
                 num_entries += 1
                 # if (num_entries % 1000 == 0):
@@ -136,7 +133,3 @@ class DatabaseManager:
 
     def get_db_path(self):
         return self.db_path
-
-    def dictionarySize(self) -> int:
-        session = self.session
-        return session.query(Dictionary).count()
